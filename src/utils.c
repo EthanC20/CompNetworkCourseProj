@@ -75,4 +75,20 @@ uint8_t ip_prefix_match(uint8_t *ipa, uint8_t *ipb)
 uint16_t checksum16(uint16_t *data, size_t len)
 {
     // TO-DO
+    // 初始化sum为0
+    uint32_t sum = 0;
+    // 把data中的每两个字节相加
+    for (int i = 0; i < len; i+=2){
+        if (i == len - 1){
+            sum += *(uint8_t *)(data + i);
+        } else {
+            sum += data[i / 2];
+        }
+    }
+    // 如果sum超过16位,则把高16位加到低16位
+    while (sum >> 16){
+        sum = (sum & 0xffff) + (sum >> 16);
+    }
+    // 取反得到校验和
+    return (~sum) & 0xffff;
 }
