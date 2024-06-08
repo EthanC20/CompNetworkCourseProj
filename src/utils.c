@@ -80,12 +80,12 @@ uint16_t checksum16(uint16_t *data, size_t len)
     // 把data中的每两个字节相加
     for (int i = 0; i < len; i+=2){
         if (i == len - 1){
-            sum += *(uint8_t *)(data + i);
+            sum += *((uint8_t *)data + i);
         } else {
             sum += data[i / 2];
         }
     }
-    // 如果sum超过16位,则把高16位加到低16位
+    // 如果sum超过16位,则把高16位加到低16位,直到sum高位为0
     while (sum >> 16){
         sum = (sum & 0xffff) + (sum >> 16);
     }

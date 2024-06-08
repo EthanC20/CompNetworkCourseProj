@@ -109,14 +109,12 @@ void arp_in(buf_t *buf, uint8_t *src_mac)
 {
     // TO-DO
     // 首先判断数据长度,如果小于ARP头部长度,则直接丢弃
-    if (buf->len < sizeof(arp_pkt_t))
-    {
-        return;
-    }
+    if (buf->len < sizeof(arp_pkt_t)) return;
 
     // 获取ARP包头,检查硬件类型、协议类型、硬件地址长度和协议地址长度是否正确
     arp_pkt_t *arp_pkt = (arp_pkt_t *)buf->data;
-    if (arp_pkt->hw_type16 != swap16(ARP_HW_ETHER) || arp_pkt->pro_type16 != swap16(NET_PROTOCOL_IP) || arp_pkt->hw_len != NET_MAC_LEN || arp_pkt->pro_len != NET_IP_LEN) return;
+    if (arp_pkt->hw_type16 != swap16(ARP_HW_ETHER) || arp_pkt->pro_type16 != swap16(NET_PROTOCOL_IP)) return;
+    if (arp_pkt->hw_len != NET_MAC_LEN || arp_pkt->pro_len != NET_IP_LEN) return;
     if (arp_pkt->opcode16 != swap16(ARP_REQUEST) && arp_pkt->opcode16 != swap16(ARP_REPLY)) return;
 
     // 更新ARP表
@@ -132,7 +130,7 @@ void arp_in(buf_t *buf, uint8_t *src_mac)
     else{
         if (arp_pkt->opcode16 == swap16(ARP_REQUEST) && memcmp(arp_pkt->target_ip, net_if_ip, NET_IP_LEN) == 0){
             // 如果是ARP请求且目标是本机IP,则回复ARP响应
-            arp_resp(arp_pkt->sender_ip, arp_pkt->sender_mac);
+            arp_resp( arp_pkt->sender_ip, arp_pkt->sender_mac);
         }
     }
 }
